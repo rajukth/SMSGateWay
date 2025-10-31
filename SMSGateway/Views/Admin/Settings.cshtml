@@ -1,0 +1,43 @@
+﻿@model SMSGateway.ViewModels.SmsSetupVm
+
+@{
+    ViewData["Title"] = "SMS Gateway Settings";
+}
+
+<h3 class="mb-4">📡 SMS Gateway Settings</h3>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
+
+<form asp-action="Settings" method="post" class="card p-3 shadow-sm">
+    <div class="mb-3">
+        <label asp-for="CountryCode" class="form-label fw-semibold"></label>
+        <input asp-for="CountryCode" class="form-control" />
+        <span asp-validation-for="CountryCode" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="TemplateName" class="form-label fw-semibold"></label>
+        <input asp-for="TemplateName" class="form-control" />
+        <span asp-validation-for="TemplateName" class="text-danger"></span>
+    </div>
+<div class="mb-3">
+        <label asp-for="Header" class="form-label fw-semibold"></label>
+        <input asp-for="Header" class="form-control" />
+        <span asp-validation-for="Header" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Footer" class="form-label fw-semibold"></label>
+        <input asp-for="Footer" class="form-control" />
+        <span asp-validation-for="Footer" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Save Settings</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

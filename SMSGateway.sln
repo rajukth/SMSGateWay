@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMSGateway", "SMSGateway\SMSGateway.csproj", "{2209C58B-2478-4B7D-A1EA-F641920E274D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMS", "SMS\SMS.csproj", "{FAFA7073-7A18-425F-86AE-63A02A7096E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsGateway.Service", "SmsGateway.Service\SmsGateway.Service.csproj", "{CE9A7874-29CD-47C8-850F-E601F9803D12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{2209C58B-2478-4B7D-A1EA-F641920E274D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2209C58B-2478-4B7D-A1EA-F641920E274D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2209C58B-2478-4B7D-A1EA-F641920E274D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAFA7073-7A18-425F-86AE-63A02A7096E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAFA7073-7A18-425F-86AE-63A02A7096E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAFA7073-7A18-425F-86AE-63A02A7096E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAFA7073-7A18-425F-86AE-63A02A7096E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE9A7874-29CD-47C8-850F-E601F9803D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE9A7874-29CD-47C8-850F-E601F9803D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE9A7874-29CD-47C8-850F-E601F9803D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE9A7874-29CD-47C8-850F-E601F9803D12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
