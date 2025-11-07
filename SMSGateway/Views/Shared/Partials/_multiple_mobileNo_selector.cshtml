@@ -1,0 +1,118 @@
+﻿@model string
+@{
+    var fieldId = ViewData["FieldId"]?.ToString() ?? "PhoneNumber";
+    var fieldName = ViewData["FieldName"]?.ToString() ?? "PhoneNumber";
+}
+<div class="mb-3">
+    <label class="form-label fw-semibold">Phone Number(s)</label>
+
+    <div id="@($"{fieldId}_container")" class="multi-phone form-control d-flex flex-wrap align-items-center gap-1">
+        <input type="text" id="@($"{fieldId}_input")" class="border-0 flex-grow-1" placeholder="98XXXXXXXX, 97XXXXXXXX" />
+    </div>
+
+    <!-- Hidden input bound to your model -->
+    <input type="hidden" id="@fieldId" name="@fieldName" value="@Model" />
+
+    <div class="form-text text-muted">
+        Add one or more numbers separated by commas or press Enter.
+    </div>
+</div>
+
+<style>
+.multi-phone {
+    min-height: 45px;
+    cursor: text;
+}
+.multi-phone input {
+    outline: none;
+}
+</style>
+
+<script>
+(() => {
+    const fieldId = "@fieldId";
+    const container = document.getElementById(fieldId + "_container");
+    const phoneInput = document.getElementById(fieldId + "_input");
+    const hiddenInput = document.getElementById(fieldId);
+
+    if (!container || !phoneInput || !hiddenInput) {
+        console.warn("MultiPhoneField: elements not found for " + fieldId);
+        return;
+    }
+
+    let numbers = hiddenInput.value
+        ? hiddenInput.value.split(",").filter(n => n.trim())
+        : [];
+
+    const isValidNepalNumber = num => /^(?:\+?977)?(97|98)\d{8}$/.test(num.trim());
+
+    function renderBadges() {
+        container.querySelectorAll("span.badge").forEach(el => el.remove());
+        numbers.forEach(num => addBadge(num));
+        updateHidden();
+    }
+
+    function addBadge(num) {
+        const badge = document.createElement("span");
+        badge.className = "badge bg-secondary d-flex align-items-center gap-1";
+        badge.textContent = num;
+
+        const close = document.createElement("span");
+        close.innerHTML = "&times;";
+        close.className = "ms-1 text-white fw-bold";
+        close.style.cursor = "pointer";
+        close.onclick = () => {
+            numbers = numbers.filter(n => n !== num);
+            badge.remove();
+            updateHidden();
+        };
+
+        badge.appendChild(close);
+        container.insertBefore(badge, phoneInput);
+    }
+
+    function updateHidden() {
+        hiddenInput.value = numbers.join(",");
+        console.log("Updated hidden input:", hiddenInput.value);
+    }
+
+    function addPhone(num) {
+        num = num.trim();
+        if (!num) return;
+        if (!isValidNepalNumber(num)) {
+            phoneInput.classList.add("is-invalid");
+            return;
+        }
+        phoneInput.classList.remove("is-invalid");
+
+        if (!numbers.includes(num)) {
+            numbers.push(num);
+            addBadge(num);
+            updateHidden();
+        }
+        phoneInput.value = "";
+    }
+
+    phoneInput.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            addPhone(phoneInput.value);
+        }
+    });
+
+    phoneInput.addEventListener("blur", () => {
+        // also add on blur if valid
+        if (phoneInput.value.trim() !== "") {
+            addPhone(phoneInput.value);
+        }
+    });
+
+    phoneInput.addEventListener("paste", e => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData("text");
+        text.split(",").forEach(num => addPhone(num));
+    });
+
+    renderBadges();
+})();
+</script>

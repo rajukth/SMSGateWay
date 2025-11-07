@@ -13,6 +13,6 @@ public class SmsIndexVm
     [Required]
     public string Message { get; set; }
     public IEnumerable<SmsMessage> SmsMessages { get; set; }
-    public SelectList SmsTemplates { get; set; }
-    public int TemplateId { get; set; }
+    public List<SmsSetup> SmsTemplates { get; set; }
+    public int? TemplateId { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SMS.Constants;
 using SMS.Models;
 using SMSGateway.Data;
 using SMSGateway.ViewModels;
@@ -14,33 +15,39 @@ public class SmsController : Controller
         _context = context;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(SmsIndexVm vm)
     {
-        var messages = _context.SmsMessages.OrderByDescending(m => m.CreatedAt).ToList();
-        var smsTemplateList = new SelectList(_context.SmsSetups.ToList(),"Id","TemplateName");
-        return View(new SmsIndexVm(){SmsMessages = messages,SmsTemplates=smsTemplateList});
+        vm.SmsMessages = _context.SmsMessages.OrderByDescending(m => m.CreatedAt).ToList();
+        vm.SmsTemplates = _context.SmsSetups.ToList();
+        return View(vm);
     }
 
     [HttpPost]
-    public IActionResult Send(SmsIndexVm vm)
+    public async Task<IActionResult> Send(SmsIndexVm vm)
     {
         if (string.IsNullOrWhiteSpace(vm.PhoneNumber) || string.IsNullOrWhiteSpace(vm.Message))
-            return BadRequest("Phone number and message are required.");
-
+        {
+            ViewBag.Messages="Phone number or message cannot be empty";
+            return RedirectToAction(nameof(Index), vm);
+        }
+        var phoneNumbers = vm.PhoneNumber?
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(n => NormalizeNepalNumber(n.Trim()))
+            .Distinct()
+            .ToList();
         // Normalize Nepalese number
-        vm.PhoneNumber = NormalizeNepalNumber(vm.PhoneNumber);
+        //vm.PhoneNumber = NormalizeNepalNumber(vm.PhoneNumber);
 
         // Add header/footer
         string finalMessage = ApplyMessageTemplate(vm);
-
-        var sms = new SmsMessage
+        var smsList = phoneNumbers.Select(phoneNumber => new SmsMessage()
         {
-            PhoneNumber = vm.PhoneNumber,
+            PhoneNumber = phoneNumber,
             Message = finalMessage,
-            Status = "Pending"
-        };
-        _context.SmsMessages.Add(sms);
-        _context.SaveChanges();
+            Status = SmsStatus.Pending
+        }).ToList();
+        await _context.SmsMessages.AddRangeAsync(smsList);
+        await _context.SaveChangesAsync();
         return RedirectToAction("Index");
     }
     private string ApplyMessageTemplate(SmsIndexVm vm)
@@ -50,7 +57,6 @@ public class SmsController : Controller
         string header = settings?.Header ?? "";
         string footer = settings?.Footer ?? "";
         string final = $"{header} {vm.Message} {footer}".Trim();
-
         return final;
     }
     private string NormalizeNepalNumber(string number)

@@ -2,41 +2,57 @@
 
 <h2>SMS Dashboard</h2>
 
-<form asp-action="Send" method="post" class="mb-3" id="smsForm" novalidate>
-    <!-- Phone Number -->
-    <div class="mb-2">
-        <label class="form-label fw-semibold">Phone Number</label>
-         <select asp-for="TemplateId" asp-items="Model.SmsTemplates" id="templateSelect" class="form-control">
+<div class="d-flex justify-content-between gap-2">
+    <div class="w-50">
+        <form asp-action="Send" method="post" class="mb-3" id="smsForm" novalidate>
+            <!-- Phone Number -->
+            <div class="mb-2">
+               @await Html.PartialAsync("Partials/_multiple_mobileNo_selector", Model.PhoneNumber, new ViewDataDictionary(ViewData)
+                   {
+                       { "FieldId", "PhoneNumber" },
+                       { "FieldName", "PhoneNumber" }
+                   })
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-semibold">Message Template</label>
+                <select asp-for="TemplateId" asp-items='new SelectList(Model.SmsTemplates, "Id", "TemplateName")' id="templateSelect" class="form-control">
                     <option value="">-- Select Template --</option>
                 </select>
-        <div class="invalid-feedback">Enter a valid phone number (10–15 digits).</div>
-    </div>
- <div class="mb-2">
-        <label class="form-label fw-semibold">Phone Number</label>
-        <input type="text" name="phoneNumber" id="phoneNumber"
-               placeholder="+9779812345678"
-               required pattern="^\+?\d{10,15}$"
-               class="form-control" />
-        <div class="invalid-feedback">Enter a valid phone number (10–15 digits).</div>
-    </div>
-
-    <!-- Message -->
-    <div class="mb-2">
-        <label class="form-label fw-semibold">Message</label>
-        <textarea name="message" id="message" placeholder="Your message..."
+                <div class="invalid-feedback">Enter a valid phone number (10–15 digits).</div>
+            </div>
+            <!-- Message -->
+            <div class="mb-2">
+                <label class="form-label fw-semibold">Message</label>
+                <textarea name="message" id="message" placeholder="Your message..."
                   required maxlength="480"
-                  class="form-control" rows="3"></textarea>
+                  class="form-control" rows="5"></textarea>
 
-        <div class="d-flex justify-content-between">
-            <small id="charCount" class="text-muted">0 / 160</small>
-            <small id="smsParts" class="text-muted">(1 SMS)</small>
+                <div class="d-flex justify-content-between">
+                    <small id="charCount" class="text-muted">0 / 160</small>
+                    <small id="smsParts" class="text-muted">(1 SMS)</small>
+                </div>
+                <div class="invalid-feedback">Message cannot exceed 160 characters.</div>
+            </div>
+        </form>
+    </div>
+    <div class="preview-container bg-light w-50 d-flex flex-column border rounded shadow-sm">
+        <!-- Header -->
+        <div class="header bg-primary text-white text-center py-2 flex-shrink-0">
+            Message Preview
         </div>
-        <div class="invalid-feedback">Message cannot exceed 160 characters.</div>
+
+        <!-- Scrollable content area -->
+        <div class="preview-content p-3 flex-grow-1 overflow-auto">
+            <label id="messagePreview"></label>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer p-2 flex-shrink-0 border-top bg-white">
+            <button type="button" onclick="submitForm()" class="btn btn-primary w-100">Send SMS</button>
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Queue SMS</button>
-</form>
-
+</div>
 <table class="table table-striped">
     <thead>
     <tr>
@@ -47,12 +63,12 @@
     @foreach (var sms in Model.SmsMessages)
     {
         <tr data-id="@sms.Id">
-             <td>@sms.Id</td>
-                    <td>@sms.PhoneNumber</td>
-                    <td>@sms.Message</td>
-                    <td class="status">@sms.Status</td>
-                    <td class="sent-at">@sms.SentAt?.ToString("g")</td>
-                    <td class="response">@sms.Response</td>
+            <td>@sms.Id</td>
+            <td>@sms.PhoneNumber</td>
+            <td>@sms.Message</td>
+            <td class="status">@sms.Status</td>
+            <td class="sent-at">@sms.SentAt?.ToString("g")</td>
+            <td class="response">@sms.Response</td>
         </tr>
     }
     </tbody>
@@ -60,7 +76,7 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
     <script>
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/smsHub")
@@ -81,21 +97,30 @@
             console.log("SignalR connected");
         }).catch(err => console.error(err.toString()));
     </script>
-    
-    
-        <script>
+
+
+    <script>
+                    const form = document.getElementById("smsForm");
+                   const phoneInput = document.getElementById("phoneNumber");
+                   const template = document.getElementById("templateSelect");
+                   const msgInput = document.getElementById("message");
+                   const charCount = document.getElementById("charCount");
+                   const smsParts = document.getElementById("smsParts");
+                   const messagePreview = document.getElementById("messagePreview");
+                   function submitForm() {
+                   form.submit();
+                   }
            document.addEventListener("DOMContentLoaded", () => {
-               const form = document.getElementById("smsForm");
-               const phoneInput = document.getElementById("phoneNumber");
-               const template = document.getElementById("templateSelect");
-               const msgInput = document.getElementById("message");
-               const charCount = document.getElementById("charCount");
-               const smsParts = document.getElementById("smsParts");
-           
+               const templates= @Html.Raw(Json.Serialize(Model.SmsTemplates));       
+               const errorMsg = '@ViewBag.Messages';
+               if (errorMsg){
+                   alert(errorMsg);
+                   }
+              
                msgInput.addEventListener("input", () => {
                    const len = msgInput.value.length;
                    charCount.textContent = `${len} / 160`;
-           
+                    setSelectedTemplate();
                    // 🧮 Estimate SMS parts
                    // Each SMS = 160 chars (GSM-7 encoding)
                    // Long SMS are concatenated with ~153 chars per part
@@ -112,6 +137,24 @@
                    smsParts.classList.toggle("text-danger", overLimit);
                });
            
+               template.addEventListener("change",(e)=>{                   
+                   setSelectedTemplate()                   
+               });
+               function setSelectedTemplate(){   
+                   let templateId=parseInt(template.value);
+                   let templateData= templates.find(e => e.id === templateId);
+                   let msg= "";
+                    let typedMessage = msgInput.value;
+                   
+                   if (templateData){
+                   msg = (templateData.header ? templateData.header + ", " : "")
+                               + typedMessage
+                               + (templateData.footer ? " " + templateData.footer : "");
+                   }else{
+                       msg = typedMessage;
+                   }
+                    messagePreview.innerHTML=msg;
+               }               
                // Bootstrap-style validation
                form.addEventListener("submit", (e) => {
                    if (!form.checkValidity()) {
@@ -123,3 +166,17 @@
            });
         </script>
 }
+
+<style>
+    .preview-container {
+        height: 350px; 
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .preview-content {
+        overflow-y: auto;
+        flex: 1;
+    }
+
+</style>
