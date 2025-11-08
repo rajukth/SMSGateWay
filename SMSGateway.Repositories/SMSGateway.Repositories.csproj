@@ -10,4 +10,9 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SMSGateway.Base\SMSGateway.Base.csproj" />
+      <ProjectReference Include="..\SMS\SMS.csproj" />
+    </ItemGroup>
+
 </Project>

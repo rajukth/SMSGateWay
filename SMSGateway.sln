@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsGateway.Service", "SmsGa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMSGateway.Managers", "SMSGateway.Managers\SMSGateway.Managers.csproj", "{BE6DBDB1-C2E5-468D-80B8-B887B5D48F43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMSGateway.Repositories", "SMSGateway.Repositories\SMSGateway.Repositories.csproj", "{38673003-F9C0-4317-B2B7-B862A66F61CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMSGateway.Base", "SMSGateway.Base\SMSGateway.Base.csproj", "{827E3BE0-FCF7-4808-86C2-F1954BF562EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{BE6DBDB1-C2E5-468D-80B8-B887B5D48F43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE6DBDB1-C2E5-468D-80B8-B887B5D48F43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE6DBDB1-C2E5-468D-80B8-B887B5D48F43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38673003-F9C0-4317-B2B7-B862A66F61CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38673003-F9C0-4317-B2B7-B862A66F61CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38673003-F9C0-4317-B2B7-B862A66F61CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38673003-F9C0-4317-B2B7-B862A66F61CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{827E3BE0-FCF7-4808-86C2-F1954BF562EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{827E3BE0-FCF7-4808-86C2-F1954BF562EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{827E3BE0-FCF7-4808-86C2-F1954BF562EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{827E3BE0-FCF7-4808-86C2-F1954BF562EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

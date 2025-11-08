@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SMS.Models;
+using SMSGateway.Base.DataContext.Interface;
 using SMSGateway.Data;
 using SMSGateway.Hubs;
+using SMSGateway.Repositories.Interfaces;
 
 namespace SMSGateway.Controllers;
 
@@ -10,19 +12,21 @@ namespace SMSGateway.Controllers;
 [ApiController]
 public class ApiSmsController : ControllerBase
 {
-    private readonly AppDbContext _context;
     private readonly IHubContext<SmsHub> _hub;
+    private readonly ISMSMessageRepository _smsMessageRepository;
+    private readonly IUow _uow;
 
-    public ApiSmsController(AppDbContext context, IHubContext<SmsHub> hub)
+    public ApiSmsController(IHubContext<SmsHub> hub, ISMSMessageRepository smsMessageRepository, IUow uow)
     {
-        _context = context;
         _hub = hub;
+        _smsMessageRepository = smsMessageRepository;
+        _uow = uow;
     }
 
     [HttpGet("pending")]
     public IActionResult GetPending()
     {
-        var pending = _context.SmsMessages
+        var pending = _smsMessageRepository.GetBaseQueryable()
             .Where(s => s.Status == "Pending")
             .OrderBy(s => s.CreatedAt)
             .Take(5)
@@ -33,13 +37,14 @@ public class ApiSmsController : ControllerBase
     [HttpPost("update-status")]
     public async Task<IActionResult> UpdateStatus([FromBody] UpdateSmsStatusDto dto)
     {
-        var sms = await _context.SmsMessages.FindAsync(dto.Id);
+        var sms = await _smsMessageRepository.FindAsync(dto.Id);
         if (sms == null) return NotFound();
 
         sms.Status = dto.Status;
         sms.Response = dto.Response;
         sms.SentAt = DateTime.Now;
-        await _context.SaveChangesAsync();
+        await _uow.CreateAsync(sms);
+        await _uow.SaveChangesAsync();
 
         await _hub.Clients.All.SendAsync("ReceiveStatusUpdate", sms.Id, sms.Status,sms.SentAt, sms.Response);
         return Ok();

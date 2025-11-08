@@ -1,24 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using SMS.Constants;
 using SMS.Models;
+using SMSGateway.Base.DataContext.Interface;
 using SMSGateway.Data;
+using SMSGateway.Repositories.Interfaces;
 using SMSGateway.ViewModels;
 
 namespace SMSGateway.Controllers;
 public class SmsController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly ISMSSetupRepository _smsSetupRepository;
+    private readonly ISMSMessageRepository _smsMessageRepository;
+    private readonly IUow _uow;
 
-    public SmsController(AppDbContext context)
+    public SmsController(AppDbContext context, ISMSSetupRepository smsSetupRepository, ISMSMessageRepository smsMessageRepository, IUow uow)
     {
         _context = context;
+        _smsSetupRepository = smsSetupRepository;
+        _smsMessageRepository = smsMessageRepository;
+        _uow = uow;
     }
 
     public IActionResult Index(SmsIndexVm vm)
     {
-        vm.SmsMessages = _context.SmsMessages.OrderByDescending(m => m.CreatedAt).ToList();
-        vm.SmsTemplates = _context.SmsSetups.ToList();
+        vm.SmsMessages = _smsMessageRepository.GetBaseQueryable().OrderByDescending(m => m.CreatedAt).ToList();
+        vm.SmsTemplates = _smsSetupRepository.GetBaseQueryable().ToList();
         return View(vm);
     }
 
@@ -46,13 +53,13 @@ public class SmsController : Controller
             Message = finalMessage,
             Status = SmsStatus.Pending
         }).ToList();
-        await _context.SmsMessages.AddRangeAsync(smsList);
-        await _context.SaveChangesAsync();
+        await _uow.CreateMultipleAsync(smsList);
+        await _uow.SaveChangesAsync();
         return RedirectToAction("Index");
     }
     private string ApplyMessageTemplate(SmsIndexVm vm)
     {
-        var settings = _context.SmsSetups.FirstOrDefault(x=>x.Id==vm.TemplateId);
+        var settings = _smsSetupRepository.GetBaseQueryable().FirstOrDefault(x=>x.Id==vm.TemplateId);
 
         string header = settings?.Header ?? "";
         string footer = settings?.Footer ?? "";

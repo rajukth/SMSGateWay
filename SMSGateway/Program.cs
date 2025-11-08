@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using SMS;
+using SMSGateway.Base;
 using SMSGateway.Data;
 using SMSGateway.Hubs;
+using SMSGateway.Managers;
+using SMSGateway.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +13,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSignalR();
+builder.Services
+    .BaseConfig()
+    .SMSConfig()
+    .SMSManager()
+    .SMSRepository()
+    ;
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
