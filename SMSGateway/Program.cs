@@ -11,7 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+    , x => x.MigrationsAssembly("SMSGateway.Base")
+    ));
 builder.Services.AddSignalR();
 builder.Services
     .BaseConfig()
