@@ -4,7 +4,7 @@ namespace SMSGateway.Base.DataContext.Interface;
 
 public interface IUow
 {
-    DbContext Context { get; }
+    AppDbContext Context { get; }
     void SaveChanges();
     Task SaveChangesAsync();
     Task CreateAsync<T>(T entity);

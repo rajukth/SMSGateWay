@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SMS.Models;
 using SMSGateway.Base.DataContext.Interface;
-using SMSGateway.Data;
 using SMSGateway.Repositories.Interfaces;
 using SMSGateway.ViewModels;
 
@@ -9,13 +8,11 @@ namespace SMSGateway.Controllers;
 
 public class AdminController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ISMSSetupRepository _smsSetupRepository;
     private readonly IUow _uow;
 
-    public AdminController(AppDbContext context, ISMSSetupRepository smsSetupRepository, IUow uow)
+    public AdminController(ISMSSetupRepository smsSetupRepository, IUow uow)
     {
-        _context = context;
         _smsSetupRepository = smsSetupRepository;
         _uow = uow;
     }

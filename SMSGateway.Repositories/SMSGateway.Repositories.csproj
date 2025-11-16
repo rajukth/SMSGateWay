@@ -12,7 +12,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SMSGateway.Base\SMSGateway.Base.csproj" />
-      <ProjectReference Include="..\SMS\SMS.csproj" />
     </ItemGroup>
 
 </Project>

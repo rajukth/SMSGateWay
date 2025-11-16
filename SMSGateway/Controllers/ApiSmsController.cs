@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using SMS.Models;
+using SMS.Constants;
 using SMSGateway.Base.DataContext.Interface;
-using SMSGateway.Data;
 using SMSGateway.Hubs;
 using SMSGateway.Repositories.Interfaces;
 
@@ -27,7 +26,7 @@ public class ApiSmsController : ControllerBase
     public IActionResult GetPending()
     {
         var pending = _smsMessageRepository.GetBaseQueryable()
-            .Where(s => s.Status == "Pending")
+            .Where(s => s.Status == SmsStatus.Pending)
             .OrderBy(s => s.CreatedAt)
             .Take(5)
             .ToList();

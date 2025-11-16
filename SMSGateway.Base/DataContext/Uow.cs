@@ -5,9 +5,9 @@ namespace SMSGateway.Base.DataContext;
 
 public class Uow : IUow
 {
-    public DbContext Context { get; }
+    public AppDbContext Context { get; }
 
-    public Uow(DbContext context)
+    public Uow(AppDbContext context)
     {
         Context = context;
     }

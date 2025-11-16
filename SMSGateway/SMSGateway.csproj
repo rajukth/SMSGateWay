@@ -20,7 +20,6 @@
       <ProjectReference Include="..\SMSGateway.Base\SMSGateway.Base.csproj" />
       <ProjectReference Include="..\SMSGateway.Managers\SMSGateway.Managers.csproj" />
       <ProjectReference Include="..\SMSGateway.Repositories\SMSGateway.Repositories.csproj" />
-      <ProjectReference Include="..\SMS\SMS.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Data\" />
       <Folder Include="Pages\" />
     </ItemGroup>
 

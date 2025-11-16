@@ -2,21 +2,18 @@
 using SMS.Constants;
 using SMS.Models;
 using SMSGateway.Base.DataContext.Interface;
-using SMSGateway.Data;
 using SMSGateway.Repositories.Interfaces;
 using SMSGateway.ViewModels;
 
 namespace SMSGateway.Controllers;
 public class SmsController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ISMSSetupRepository _smsSetupRepository;
     private readonly ISMSMessageRepository _smsMessageRepository;
     private readonly IUow _uow;
 
-    public SmsController(AppDbContext context, ISMSSetupRepository smsSetupRepository, ISMSMessageRepository smsMessageRepository, IUow uow)
+    public SmsController(ISMSSetupRepository smsSetupRepository, ISMSMessageRepository smsMessageRepository, IUow uow)
     {
-        _context = context;
         _smsSetupRepository = smsSetupRepository;
         _smsMessageRepository = smsMessageRepository;
         _uow = uow;

@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SMS;
-using SMS.Models;
 using SMSGateway.Base;
 
-namespace SMSGateway.Data;
+namespace SMSGateway.Base.DataContext;
 
 public class AppDbContext : DbContext
 {
@@ -11,7 +9,6 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.AddSMSGateway();
         builder.AddBase();
         base.OnModelCreating(builder);
     }

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SMS;
 using SMSGateway.Base;
-using SMSGateway.Data;
+using SMSGateway.Base.DataContext;
 using SMSGateway.Hubs;
 using SMSGateway.Managers;
 using SMSGateway.Repositories;
@@ -15,7 +15,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddSignalR();
 builder.Services
     .BaseConfig()
-    .SMSConfig()
     .SMSManager()
     .SMSRepository()
     ;

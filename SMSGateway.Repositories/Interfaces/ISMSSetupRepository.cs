@@ -1,5 +1,5 @@
-﻿using SMSGateway.Base.GenericRepository.Interface;
-using SMS.Models;
+﻿using SMS.Models;
+using SMSGateway.Base.GenericRepository.Interface;
 
 namespace SMSGateway.Repositories.Interfaces;
 
